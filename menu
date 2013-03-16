@@ -68,6 +68,7 @@ do
   echo 
   echo "============================================================"
   echo " Android Kitchen $version - by dsixda (xda-developers.com)"
+  echo " modded by Alfiyan (@alfiyansys)"
   echo "============================================================"
   echo
   echo "  1 - Set up working folder from ROM"
