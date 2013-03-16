@@ -4,6 +4,8 @@ use strict;
 use bytes;
 use File::Path;
 
+our $filename = '../kernel-lzma';
+
 die "did not specify boot img file\n" unless $ARGV[0];
 
 my $bootimgfile = $ARGV[0];
@@ -18,7 +20,7 @@ $/ = $slurpvar;
 
 
 my($bootMagic, $kernelSize, $kernelLoadAddr, $ram1Size, $ram1LoadAddr, $ram2Size, $ram2LoadAddr, $tagsAddr, $pageSize, $unused1, $unused2, $bootName, $cmdLine, $id) =
-	unpack('a8 L L L L L L L L L L a16 a512 a8', $bootimg);
+unpack('a8 L L L L L L L L L L a16 a512 a8', $bootimg);
 	
 $pageSize = 4096;
 
@@ -34,17 +36,34 @@ my($ram1) = substr($bootimg, $ram1Addr, $ram1Size);
 #	die "The boot image does not appear to be a valid lzma file";
 #}
 
+
+if (-e $filename) { 
 open (RAM1FILE, ">$ARGV[0]-ramdisk.cpio.lzma");
 binmode(RAM1FILE);
 print RAM1FILE $ram1 or die;
 close RAM1FILE;
+}
+else{
+open (RAM1FILE, ">$ARGV[0]-ramdisk.cpio.gz");
+binmode(RAM1FILE);
+print RAM1FILE $ram1 or die;
+close RAM1FILE;
+}
 
 if (-e "$ARGV[0]-ramdisk") { 
 	rmtree "$ARGV[0]-ramdisk";
 	print "\nremoved old directory $ARGV[0]-ramdisk\n";
 }
 
+if (-e $filename){
 mkdir "$ARGV[0]-ramdisk" or die;
 chdir "$ARGV[0]-ramdisk" or die;
 system ("lzma -d -c ../$ARGV[0]-ramdisk.cpio.lzma | cpio -i");
 system ("rm -f ../$ARGV[0]-ramdisk.cpio.lzma");
+}
+else{
+mkdir "$ARGV[0]-ramdisk" or die;
+chdir "$ARGV[0]-ramdisk" or die;
+system ("gzip -d -c ../$ARGV[0]-ramdisk.cpio.gz | cpio -i");
+system ("rm -f ../$ARGV[0]-ramdisk.cpio.gz");
+}

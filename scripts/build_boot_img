@@ -71,7 +71,7 @@ then
   then
    
     cd ..
-    scripts/check_kernel_offset
+#    scripts/check_kernel_offset
     res=$?
 
     if [ "$res" != "0" ]
@@ -191,11 +191,14 @@ cd BOOT-EXTRACTED
 #
 
 echo 
-echo "Creating ramdisk cpio archive ..."
+if [ -e ../kernel-lzma ]
+then
+echo "Creating ramdisk lzma cpio archive ..."
 ./$mkbootfs_file boot.img-ramdisk | lzma > ramdisk.lzma
-
-
-
+else
+echo "Creating ramdisk gzip cpio archive ..."
+./$mkbootfs_file boot.img-ramdisk | gzip > ramdisk.gz
+fi
 
 cd ..
 cd WORKING_*
@@ -276,9 +279,19 @@ fi
 
 if [ "$cmd_line" == "" ]
 then
-  ./$mkbootimg_file --kernel zImage --ramdisk ramdisk.lzma -o newBoot.img --base $base $ramdisk_params
+	if [ -e ../kernel-lzma ]
+	then
+	./$mkbootimg_file --kernel zImage --ramdisk ramdisk.lzma -o newBoot.img --base $base $ramdisk_params
+	else
+	./$mkbootimg_file --kernel zImage --ramdisk ramdisk.gz -o newBoot.img --base $base $ramdisk_params
+	fi
 else
-  ./$mkbootimg_file --kernel zImage --ramdisk ramdisk.lzma --cmdline "$cmd_line" -o newBoot.img --base $base $ramdisk_params
+	if [ -e ../kernel-lzma ]
+	then
+	./$mkbootimg_file --kernel zImage --ramdisk ramdisk.lzma --cmdline "$cmd_line" -o newBoot.img --base $base $ramdisk_params
+	else
+	./$mkbootimg_file --kernel zImage --ramdisk ramdisk.gz --cmdline "$cmd_line" -o newBoot.img --base $base $ramdisk_params
+	fi
 fi
 
 
