@@ -46,7 +46,7 @@ then
 
       cd ..
       scripts/check_bootimg_header
-#      scripts/check_kernel_offset
+      scripts/check_kernel_offset
       res=$?
 
       if [ "$res" == "0" ]
@@ -83,7 +83,7 @@ then
       fi
 
       echo Extracting ramdisk ... 
-      ./extract-ramdisk.pl boot.img # 2>/dev/null
+      ./extract-ramdisk.pl boot.img 2>/dev/null
 
       if [ ! -d boot.img-ramdisk ]
       then
