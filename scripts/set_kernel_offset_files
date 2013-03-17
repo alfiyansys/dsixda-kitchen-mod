@@ -39,18 +39,18 @@ then
   sed -i -e ''$pgsz_line_num's/.*/    unsigned pagesize = '$dec_offset';/' tools/mkboot/mkbootimg.c
 fi
 
-str=`sed '23q;d' tools/extract_boot_files/extract-kernel.pl`
+str=`sed '25q;d' tools/extract_boot_files/extract-kernel.pl`
 if [ "$str" != "\$pageSize = $dec_offset;" ]
 then
-  echo "Setting offset=$dec_offset in extract-kernel.pl, line 23"
-  sed -i -e '23s/.*/$pageSize = '$dec_offset';/' tools/extract_boot_files/extract-kernel.pl
+  echo "Setting offset=$dec_offset in extract-kernel.pl, line 25"
+  sed -i -e '25s/.*/$pageSize = '$dec_offset';/' tools/extract_boot_files/extract-kernel.pl
 fi
 
-str=`sed '23q;d' tools/extract_boot_files/extract-ramdisk.pl`
+str=`sed '25q;d' tools/extract_boot_files/extract-ramdisk.pl`
 if [ "$str" != "\$pageSize = $dec_offset;" ]
 then
-  echo "Setting offset=$dec_offset in extract-ramdisk.pl, line 23"
-  sed -i -e '23s/.*/$pageSize = '$dec_offset';/' tools/extract_boot_files/extract-ramdisk.pl
+  echo "Setting offset=$dec_offset in extract-ramdisk.pl, line 25"
+  sed -i -e '25s/.*/$pageSize = '$dec_offset';/' tools/extract_boot_files/extract-ramdisk.pl
 fi
 
 exit 0
